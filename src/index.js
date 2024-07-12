@@ -87,6 +87,7 @@ class TimeRange extends React.Component {
       showTooltip,
       now,
       snapshots,
+      error,
     } = this.props;
 
     const domain = timelineInterval.map((t) => Number(t));
