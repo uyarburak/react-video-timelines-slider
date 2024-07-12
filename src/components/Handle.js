@@ -9,6 +9,7 @@ const Handle = ({
   getHandleProps,
   isActive,
   showTooltip,
+  error,
 }) => {
   const leftPosition = `${percent}%`;
   const [mouseOver, setMouseOver] = useState(false);
@@ -47,6 +48,7 @@ const Handle = ({
         className="react_time_range__handle_container"
         style={{
           left: `calc(${leftPosition} ${id === "$$-0" ? "+" : "-"} 2px)`,
+          backgroundColor: error ? "#EF4444" : "#10B981",
         }}
       >
         <div className="react_time_range__handle_marker" />
@@ -63,13 +65,13 @@ Handle.propTypes = {
     percent: PropTypes.number.isRequired,
   }).isRequired,
   getHandleProps: PropTypes.func.isRequired,
-  disabled: PropTypes.bool,
   style: PropTypes.object,
   formatTooltip: PropTypes.func.isRequired,
   isActive: PropTypes.bool.isRequired,
   showTooltip: PropTypes.bool.isRequired,
+  error: PropTypes.bool.isRequired,
 };
 
-Handle.defaultProps = { disabled: false };
+Handle.defaultProps = {};
 
 export default Handle;

@@ -213,6 +213,7 @@ class TimeRange extends React.Component {
                       formatTooltip={formatTooltip}
                       isActive={handle.id === activeHandleID}
                       showTooltip={showTooltip}
+                      error={error}
                     />
                   ))}
                   {handles.map((handle, index) => (
@@ -250,6 +251,7 @@ class TimeRange extends React.Component {
                       source={source}
                       target={target}
                       getTrackProps={getTrackProps}
+                      error={error}
                     />
                   ))}
                 </>
@@ -303,6 +305,7 @@ TimeRange.propTypes = {
   showTooltip: PropTypes.bool,
   now: PropTypes.object,
   snapshots: PropTypes.arrayOf(PropTypes.string),
+  error: PropTypes.bool,
 };
 
 TimeRange.defaultProps = {
@@ -318,6 +321,7 @@ TimeRange.defaultProps = {
   ticksNumber: 48,
   mode: 3,
   showTooltip: true,
+  error: false,
 };
 
 export default TimeRange;
