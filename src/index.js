@@ -8,72 +8,16 @@ import {
   startOfToday,
   endOfToday,
   differenceInMilliseconds,
-  isBefore,
-  isAfter,
   set,
-  addMinutes,
 } from "date-fns";
 
 import SliderRail from "./components/SliderRail";
 import Track from "./components/Track";
-import Tick from "./components/Tick";
 import Handle from "./components/Handle";
 
 import "./styles/index.scss";
 
-const getTimelineConfig = (timelineStart, timelineLength) => (date) => {
-  const percent =
-    (differenceInMilliseconds(date, timelineStart) / timelineLength) * 100;
-  const value = Number(format(date, "T"));
-  return { percent, value };
-};
-
-const getFormattedBlockedIntervals = (
-  blockedDates = [],
-  [startTime, endTime]
-) => {
-  if (!blockedDates.length) return null;
-
-  const timelineLength = differenceInMilliseconds(endTime, startTime);
-  const getConfig = getTimelineConfig(startTime, timelineLength);
-
-  const formattedBlockedDates = blockedDates.map((interval, index) => {
-    let { start, end } = interval;
-
-    if (isBefore(start, startTime)) start = startTime;
-    if (isAfter(end, endTime)) end = endTime;
-
-    const source = getConfig(start);
-    const target = getConfig(end);
-
-    return { id: `blocked-track-${index}`, source, target };
-  });
-
-  return formattedBlockedDates;
-};
-
-const getNowConfig = ([startTime, endTime]) => {
-  const timelineLength = differenceInMilliseconds(endTime, startTime);
-  const getConfig = getTimelineConfig(startTime, timelineLength);
-
-  const source = getConfig(new Date());
-  const target = getConfig(addMinutes(new Date(), 1));
-
-  return { id: "now-track", source, target };
-};
-
 class TimeRange extends React.Component {
-  get disabledIntervals() {
-    return getFormattedBlockedIntervals(
-      this.props.disabledIntervals,
-      this.props.timelineInterval
-    );
-  }
-
-  get now() {
-    return getNowConfig(this.props.timelineInterval);
-  }
-
   onChange = (newTime) => {
     const formattedNewTime = newTime.map((t) => new Date(t));
     this.props.onChangeCallback(formattedNewTime);
@@ -117,10 +61,16 @@ class TimeRange extends React.Component {
 
   getDateTicks = () => {
     const { timelineInterval, ticksNumber } = this.props;
-    return scaleTime()
+    const ticks = scaleTime()
       .domain(timelineInterval)
-      .ticks(ticksNumber)
+      .ticks(ticksNumber - 2)
       .map((t) => +t);
+
+    return [
+      timelineInterval[0].getTime(),
+      ...ticks,
+      timelineInterval[1].getTime(),
+    ];
   };
 
   render() {
@@ -129,20 +79,25 @@ class TimeRange extends React.Component {
       timelineInterval,
       selectedInterval,
       containerClassName,
-      error,
       step,
       showNow,
       formatTick,
       formatTooltip,
       mode,
-      showTimelineError,
       showTooltip,
-      tooltipTag,
+      now,
+      snapshots,
     } = this.props;
 
     const domain = timelineInterval.map((t) => Number(t));
 
-    const disabledIntervals = this.disabledIntervals;
+    const timelineLength = differenceInMilliseconds(
+      timelineInterval[1],
+      timelineInterval[0]
+    );
+    const percent =
+      (differenceInMilliseconds(now, timelineInterval[0]) / timelineLength) *
+      100;
 
     return (
       <div
@@ -150,115 +105,186 @@ class TimeRange extends React.Component {
           containerClassName || "react_time_range__time_range_container"
         }
       >
-        <Slider
-          mode={mode}
-          step={step}
-          domain={domain}
-          onUpdate={this.onUpdate}
-          onChange={this.onChange}
-          values={selectedInterval.map((t) => +t)}
-          rootStyle={{ position: "relative", width: "100%" }}
-        >
-          <Rail>
-            {({ getRailProps, getEventData, activeHandleID }) => (
-              <SliderRail
-                className={sliderRailClassName}
-                activeHandleID={activeHandleID}
-                getRailProps={getRailProps}
-                getEventData={getEventData}
-                formatTooltip={formatTooltip}
-                showTooltip={showTooltip}
-                tooltipTag={tooltipTag}
-              />
-            )}
-          </Rail>
-
-          <Handles>
-            {({ handles, getHandleProps, activeHandleID }) => (
-              <>
-                {handles.map((handle) => (
-                  <Handle
-                    error={error}
-                    key={handle.id}
-                    handle={handle}
-                    domain={domain}
-                    getHandleProps={getHandleProps}
-                    showTimelineError={showTimelineError}
-                    formatTooltip={formatTooltip}
-                    isActive={handle.id === activeHandleID}
-                    showTooltip={showTooltip}
-                    tooltipTag={tooltipTag}
-                  />
-                ))}
-              </>
-            )}
-          </Handles>
-
-          <Tracks left={false} right={false}>
-            {({ tracks, getTrackProps }) => (
-              <>
-                {tracks?.map(({ id, source, target }) => (
-                  <Track
-                    error={error}
-                    key={id}
-                    source={source}
-                    target={target}
-                    getTrackProps={getTrackProps}
-                    showTimelineError={showTimelineError}
-                  />
-                ))}
-              </>
-            )}
-          </Tracks>
-
-          {disabledIntervals?.length && (
-            <Tracks left={false} right={false}>
-              {({ getTrackProps }) => (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div className="ticks-container">
+            <Ticks values={this.getDateTicks()}>
+              {({ ticks }) => (
                 <>
-                  {disabledIntervals.map(({ id, source, target }) => (
+                  {ticks.map((tick, index) => (
+                    <>
+                      <div className="react_time_range__tick_label" style={{}}>
+                        {formatTick(tick.value)}
+                      </div>
+                      {index < ticks.length - 1 && (
+                        <>
+                          <svg
+                            width="3"
+                            height="2"
+                            viewBox="0 0 3 2"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <rect
+                              x="0.799805"
+                              width="2"
+                              height="2"
+                              rx="1"
+                              fill="white"
+                              fill-opacity="0.6"
+                            />
+                          </svg>
+                          <svg
+                            width="3"
+                            height="2"
+                            viewBox="0 0 3 2"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <rect
+                              x="0.799805"
+                              width="2"
+                              height="2"
+                              rx="1"
+                              fill="white"
+                              fill-opacity="0.6"
+                            />
+                          </svg>
+                          <svg
+                            width="3"
+                            height="2"
+                            viewBox="0 0 3 2"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <rect
+                              x="0.799805"
+                              width="2"
+                              height="2"
+                              rx="1"
+                              fill="white"
+                              fill-opacity="0.6"
+                            />
+                          </svg>
+                        </>
+                      )}
+                    </>
+                  ))}
+                </>
+              )}
+            </Ticks>
+          </div>
+          <Slider
+            mode={mode}
+            step={step}
+            domain={domain}
+            onUpdate={this.onUpdate}
+            onChange={this.onChange}
+            values={selectedInterval.map((t) => +t)}
+            rootStyle={{
+              position: "relative",
+              width: "100%",
+              marginTop: "38px",
+            }}
+          >
+            <Rail>
+              {({ getRailProps, getEventData, activeHandleID }) => (
+                <SliderRail
+                  className={sliderRailClassName}
+                  activeHandleID={activeHandleID}
+                  getRailProps={getRailProps}
+                  getEventData={getEventData}
+                  formatTooltip={formatTooltip}
+                  showTooltip={showTooltip}
+                  totalDuration={timelineInterval[1]}
+                  snapshots={snapshots}
+                />
+              )}
+            </Rail>
+
+            <Handles>
+              {({ handles, getHandleProps, activeHandleID }) => (
+                <>
+                  {handles.map((handle) => (
+                    <Handle
+                      key={handle.id}
+                      handle={handle}
+                      domain={domain}
+                      getHandleProps={getHandleProps}
+                      formatTooltip={formatTooltip}
+                      isActive={handle.id === activeHandleID}
+                      showTooltip={showTooltip}
+                    />
+                  ))}
+                  {handles.map((handle, index) => (
+                    <div
+                      key={handle.id}
+                      style={{
+                        left: index === 0 ? 0 : undefined,
+                        right: index === 0 ? undefined : 0,
+                        top: "-20px",
+                        width:
+                          index === 0
+                            ? `calc(${handle.percent}% + 6px)`
+                            : `calc(${100 - handle.percent}% + 4px)`,
+                        backdropFilter: "blur(2px)",
+                        background: "#FFFFFF1A",
+                        height: "40px",
+                        position: "absolute",
+                        zIndex: 1,
+                        borderRadius:
+                          index === 0 ? "16px 0 0 16px" : "0 16px 16px 0",
+                        pointerEvents: "none",
+                      }}
+                    ></div>
+                  ))}
+                </>
+              )}
+            </Handles>
+
+            <Tracks left={false} right={false}>
+              {({ tracks, getTrackProps }) => (
+                <>
+                  {tracks?.map(({ id, source, target }) => (
                     <Track
                       key={id}
                       source={source}
                       target={target}
                       getTrackProps={getTrackProps}
-                      showTimelineError={showTimelineError}
-                      disabled
                     />
                   ))}
                 </>
               )}
             </Tracks>
-          )}
 
-          {showNow && (
-            <Tracks left={false} right={false}>
-              {({ getTrackProps }) => (
-                <Track
-                  key={this.now?.id}
-                  source={this.now?.source}
-                  target={this.now?.target}
-                  getTrackProps={getTrackProps}
-                  showTimelineError={showTimelineError}
-                />
-              )}
-            </Tracks>
-          )}
-
-          <Ticks values={this.getDateTicks()}>
-            {({ ticks }) => (
+            {showNow && (
               <>
-                {ticks.map((tick) => (
-                  <Tick
-                    key={tick.id}
-                    tick={tick}
-                    count={ticks.length}
-                    format={formatTick}
-                  />
-                ))}
+                <div
+                  style={{
+                    left: `${percent}%`,
+                    position: "absolute",
+                    marginLeft: "-2px",
+                    marginTop: "-35px",
+                  }}
+                >
+                  <div className="tooltip">
+                    <span className="tooltiptext">
+                      {formatTooltip(now)}{" "}
+                      <span style={{ opacity: 0.5 }}>
+                        {formatTooltip(timelineInterval[1])}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+                <div
+                  className="now"
+                  style={{
+                    left: `${percent}%`,
+                  }}
+                />
               </>
             )}
-          </Ticks>
-        </Slider>
+          </Slider>
+        </div>
       </div>
     );
   }
@@ -274,9 +300,9 @@ TimeRange.propTypes = {
   step: PropTypes.number,
   formatTick: PropTypes.func,
   formatTooltip: PropTypes.func,
-  showTimelineError: PropTypes.bool,
   showTooltip: PropTypes.bool,
-  tooltipTag: PropTypes.string,
+  now: PropTypes.object,
+  snapshots: PropTypes.arrayOf(PropTypes.string),
 };
 
 TimeRange.defaultProps = {
@@ -290,11 +316,8 @@ TimeRange.defaultProps = {
   disabledIntervals: [],
   step: 1000 * 60 * 30,
   ticksNumber: 48,
-  error: false,
   mode: 3,
-  showTimelineError: false,
   showTooltip: true,
-  tooltipTag: "Value:",
 };
 
 export default TimeRange;

@@ -3,39 +3,36 @@ import React, { useState } from "react";
 import "./tooltip.scss";
 
 const Handle = ({
-  error,
   domain: [min, max],
   handle: { id, value, percent = 0 },
-  disabled,
-  showTimelineError,
   formatTooltip,
   getHandleProps,
   isActive,
   showTooltip,
-  tooltipTag,
 }) => {
   const leftPosition = `${percent}%`;
   const [mouseOver, setMouseOver] = useState(false);
   return (
     <>
-      {(mouseOver || isActive) && !disabled && showTooltip ? (
+      {(mouseOver || isActive) && showTooltip ? (
         <div
           style={{
             left: `${percent}%`,
             position: "absolute",
-            marginLeft: "-11px",
+            marginLeft: id === "$$-0" ? "-2px" : "-6px",
             marginTop: "-35px",
           }}
         >
-          <div className='tooltip'>
-            <span className='tooltiptext'>
-              {tooltipTag + " " + formatTooltip(value)}
+          <div className="tooltip">
+            <span className="tooltiptext">
+              {formatTooltip(value)}{" "}
+              <span style={{ opacity: 0.5 }}>{formatTooltip(max)}</span>
             </span>
           </div>
         </div>
       ) : null}
       <div
-        className='react_time_range__handle_wrapper'
+        className="react_time_range__handle_wrapper"
         style={{ left: leftPosition }}
         {...getHandleProps(id, {
           onMouseEnter: () => setMouseOver(true),
@@ -43,20 +40,16 @@ const Handle = ({
         })}
       />
       <div
-        role='slider'
+        role="slider"
         aria-valuemin={min}
         aria-valuemax={max}
         aria-valuenow={value}
-        className={`react_time_range__handle_container${
-          disabled ? "__disabled" : ""
-        }`}
-        style={{ left: leftPosition }}
+        className="react_time_range__handle_container"
+        style={{
+          left: `calc(${leftPosition} ${id === "$$-0" ? "+" : "-"} 2px)`,
+        }}
       >
-        <div
-          className={`react_time_range__handle_marker${
-            error && showTimelineError ? "__error" : ""
-          }`}
-        />
+        <div className="react_time_range__handle_marker" />
       </div>
     </>
   );
@@ -75,7 +68,6 @@ Handle.propTypes = {
   formatTooltip: PropTypes.func.isRequired,
   isActive: PropTypes.bool.isRequired,
   showTooltip: PropTypes.bool.isRequired,
-  tooltipTag: PropTypes.string.isRequired,
 };
 
 Handle.defaultProps = { disabled: false };

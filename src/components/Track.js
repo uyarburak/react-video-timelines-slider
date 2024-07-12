@@ -1,52 +1,29 @@
 import PropTypes from "prop-types";
 import React from "react";
 
-const getTrackConfig = ({
-  error,
-  source,
-  target,
-  showTimelineError,
-  disabled,
-}) => {
+const getTrackConfig = ({ source, target }) => {
   const basicStyle = {
     left: `${source.percent}%`,
     width: `calc(${target.percent - source.percent}% - 1px)`,
+    borderRadius: "16px",
+    // filter: "blur(16px)",
+    border: "2px solid #10B981",
+    height: "38px",
   };
 
-  if (disabled) return basicStyle;
-
-  const coloredTrackStyle =
-    error && showTimelineError
-      ? {
-          backgroundColor: "rgba(214,0,11,0.5)",
-          borderLeft: "1px solid rgba(214,0,11,0.5)",
-          borderRight: "1px solid rgba(214,0,11,0.5)",
-        }
-      : {
-          backgroundColor: "rgba(98, 203, 102, 0.7)",
-          borderLeft: "1px solid #62CB66",
-          borderRight: "1px solid #62CB66",
-        };
+  const coloredTrackStyle = {
+    // filter: "blur(0)",
+  };
 
   return { ...basicStyle, ...coloredTrackStyle };
 };
 
-const Track = ({
-  error,
-  source,
-  target,
-  showTimelineError,
-  getTrackProps,
-  disabled,
-}) => (
+const Track = ({ source, target, getTrackProps }) => (
   <div
-    className={`react_time_range__track${disabled ? "__disabled" : ""}`}
+    className="react_time_range__track"
     style={getTrackConfig({
-      error,
       source,
       target,
-      showTimelineError,
-      disabled,
     })}
     {...getTrackProps()}
   />
@@ -64,10 +41,8 @@ Track.propTypes = {
     percent: PropTypes.number.isRequired,
   }).isRequired,
   getTrackProps: PropTypes.func.isRequired,
-  disabled: PropTypes.bool,
-  showTimelineError: PropTypes.bool,
 };
 
-Track.defaultProps = { disabled: false };
+Track.defaultProps = {};
 
 export default Track;
