@@ -87,7 +87,7 @@ class TimeRange extends React.Component {
       showTooltip,
       now,
       snapshots,
-      error,
+      borderColor,
     } = this.props;
 
     const domain = timelineInterval.map((t) => Number(t));
@@ -214,7 +214,7 @@ class TimeRange extends React.Component {
                       formatTooltip={formatTooltip}
                       isActive={handle.id === activeHandleID}
                       showTooltip={showTooltip}
-                      error={error}
+                      borderColor={borderColor}
                     />
                   ))}
                   {handles.map((handle, index) => (
@@ -252,7 +252,7 @@ class TimeRange extends React.Component {
                       source={source}
                       target={target}
                       getTrackProps={getTrackProps}
-                      error={error}
+                      borderColor={borderColor}
                     />
                   ))}
                 </>
@@ -306,7 +306,7 @@ TimeRange.propTypes = {
   showTooltip: PropTypes.bool,
   now: PropTypes.object,
   snapshots: PropTypes.arrayOf(PropTypes.string),
-  error: PropTypes.bool,
+  borderColor: PropTypes.string,
 };
 
 TimeRange.defaultProps = {
@@ -322,7 +322,7 @@ TimeRange.defaultProps = {
   ticksNumber: 48,
   mode: 3,
   showTooltip: true,
-  error: false,
+  borderColor: "black",
 };
 
 export default TimeRange;
