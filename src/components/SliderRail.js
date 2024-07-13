@@ -14,19 +14,16 @@ export const SliderRail = ({
   const [percent, setPercent] = useState(null);
   const [value, setValue] = useState(null);
 
-  const scrollCallback = useCallback(
-    (e) => {
-      if (activeHandleID) {
-        setValue(null);
-        setPercent(null);
-      } else {
-        const { value, percent } = getEventData(e);
-        setValue(value);
-        setPercent(percent);
-      }
-    },
-    [activeHandleID, getEventData]
-  );
+  const scrollCallback = useCallback((e) => {
+    if (activeHandleID) {
+      setValue(null);
+      setPercent(null);
+    } else {
+      const { value, percent } = getEventData(e);
+      setValue(value);
+      setPercent(percent);
+    }
+  }, []);
 
   const onMouseEnter = () => {
     document.addEventListener("mousemove", scrollCallback, true);
