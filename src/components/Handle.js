@@ -39,6 +39,8 @@ const Handle = ({
           onMouseEnter: () => setMouseOver(true),
           onMouseLeave: () => setMouseOver(false),
         })}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
       />
       <div
         role="slider"
@@ -70,6 +72,8 @@ Handle.propTypes = {
   isActive: PropTypes.bool.isRequired,
   showTooltip: PropTypes.bool.isRequired,
   borderColor: PropTypes.string.isRequired,
+  onMouseEnter: PropTypes.func,
+  onMouseLeave: PropTypes.func,
 };
 
 Handle.defaultProps = {};

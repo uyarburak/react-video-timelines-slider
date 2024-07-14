@@ -18,9 +18,38 @@ import Handle from "./components/Handle";
 import "./styles/index.scss";
 
 class TimeRange extends React.Component {
+  constructor(props) {
+    super(props);
+    // Initialize state
+    this.state = {
+      disabled: true,
+    };
+
+    // Bind event handlers (if necessary)
+    this.setDisabled = this.setDisabled.bind(this);
+  }
+
+  setDisabled = (disabled) => {
+    this.setState({ disabled });
+  };
+
   onChange = (newTime) => {
     const formattedNewTime = newTime.map((t) => new Date(t));
     this.props.onChangeCallback(formattedNewTime);
+  };
+
+  setPercentage = (percentage) => {
+    const { selectedInterval } = this.props;
+    if (typeof selectedInterval[0] === "object") {
+      const diff =
+        selectedInterval[1].getTime() - selectedInterval[0].getTime();
+      this.props.setNow(
+        new Date(selectedInterval[0].getTime() + diff * percentage)
+      );
+    } else {
+      const diff = selectedInterval[1] - selectedInterval[0];
+      this.props.setNow(new Date(selectedInterval[0] + diff * percentage));
+    }
   };
 
   checkIsSelectedIntervalNotValid = ([start, end], source, target) => {
@@ -186,6 +215,7 @@ class TimeRange extends React.Component {
               width: "100%",
               marginTop: "38px",
             }}
+            disabled={this.state.disabled}
           >
             <Rail>
               {({ getRailProps, getEventData, activeHandleID }) => (
@@ -215,6 +245,8 @@ class TimeRange extends React.Component {
                       isActive={handle.id === activeHandleID}
                       showTooltip={showTooltip}
                       borderColor={borderColor}
+                      onMouseEnter={() => this.setDisabled(false)}
+                      onMouseLeave={() => this.setDisabled(true)}
                     />
                   ))}
                   {handles.map((handle, index) => (
@@ -253,6 +285,7 @@ class TimeRange extends React.Component {
                       target={target}
                       getTrackProps={getTrackProps}
                       borderColor={borderColor}
+                      setPercentage={this.setPercentage}
                     />
                   ))}
                 </>
@@ -307,6 +340,7 @@ TimeRange.propTypes = {
   now: PropTypes.object,
   snapshots: PropTypes.arrayOf(PropTypes.string),
   borderColor: PropTypes.string,
+  setNow: PropTypes.func,
 };
 
 TimeRange.defaultProps = {

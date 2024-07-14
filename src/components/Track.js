@@ -18,7 +18,13 @@ const getTrackConfig = ({ source, target, borderColor }) => {
   return { ...basicStyle, ...coloredTrackStyle };
 };
 
-const Track = ({ source, target, getTrackProps, borderColor }) => (
+const Track = ({
+  source,
+  target,
+  getTrackProps,
+  borderColor,
+  setPercentage,
+}) => (
   <div
     className="react_time_range__track"
     style={getTrackConfig({
@@ -27,6 +33,21 @@ const Track = ({ source, target, getTrackProps, borderColor }) => (
       borderColor,
     })}
     {...getTrackProps()}
+    onClick={(e) => {
+      if (e.target.className !== "react_time_range__track") {
+        return;
+      }
+      const target = e.target;
+      const targetWidth = target.offsetWidth;
+      // Get the bounding rectangle of the target element
+      const rect = target.getBoundingClientRect();
+
+      // Calculate the click position relative to the target element
+      const clickPosition = e.clientX - rect.left;
+
+      const widthPercentage = clickPosition / targetWidth;
+      setPercentage(widthPercentage);
+    }}
   />
 );
 
@@ -43,6 +64,7 @@ Track.propTypes = {
   }).isRequired,
   getTrackProps: PropTypes.func.isRequired,
   borderColor: PropTypes.string.isRequired,
+  setPercentage: PropTypes.func.isRequired,
 };
 
 Track.defaultProps = {};
