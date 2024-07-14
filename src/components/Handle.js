@@ -10,6 +10,8 @@ const Handle = ({
   isActive,
   showTooltip,
   borderColor,
+  onMouseEnter,
+  onMouseLeave,
 }) => {
   const leftPosition = `${percent}%`;
   const [mouseOver, setMouseOver] = useState(false);
