@@ -67,6 +67,4 @@ Track.propTypes = {
   setPercentage: PropTypes.func.isRequired,
 };
 
-Track.defaultProps = {};
-
 export default Track;

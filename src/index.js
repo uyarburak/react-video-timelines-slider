@@ -141,7 +141,7 @@ class TimeRange extends React.Component {
               {({ ticks }) => (
                 <>
                   {ticks.map((tick, index) => (
-                    <>
+                    <React.Fragment key={tick}>
                       <div className="react_time_range__tick_label" style={{}}>
                         {formatTick(tick.value)}
                       </div>
@@ -197,7 +197,7 @@ class TimeRange extends React.Component {
                           </svg>
                         </>
                       )}
-                    </>
+                    </React.Fragment>
                   ))}
                 </>
               )}
@@ -341,22 +341,6 @@ TimeRange.propTypes = {
   snapshots: PropTypes.arrayOf(PropTypes.string),
   borderColor: PropTypes.string,
   setNow: PropTypes.func,
-};
-
-TimeRange.defaultProps = {
-  selectedInterval: [
-    set(new Date(), { minutes: 0, seconds: 0, milliseconds: 0 }),
-    set(addHours(new Date(), 1), { minutes: 0, seconds: 0, milliseconds: 0 }),
-  ],
-  timelineInterval: [startOfToday(), endOfToday()],
-  formatTick: (ms) => format(new Date(ms), "HH:mm"),
-  formatTooltip: (ms) => format(new Date(ms), "HH:mm:ss"),
-  disabledIntervals: [],
-  step: 1000 * 60 * 30,
-  ticksNumber: 48,
-  mode: 3,
-  showTooltip: true,
-  borderColor: "black",
 };
 
 export default TimeRange;

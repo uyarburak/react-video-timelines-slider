@@ -68,6 +68,7 @@ export const SliderRail = ({
           <div className="slider-inner">
             {snapshots.map((snapshot) => (
               <div
+                key={snapshot}
                 className="frame"
                 style={{
                   backgroundImage: `url('${snapshot}')`,

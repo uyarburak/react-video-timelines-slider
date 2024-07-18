@@ -78,6 +78,4 @@ Handle.propTypes = {
   onMouseLeave: PropTypes.func,
 };
 
-Handle.defaultProps = {};
-
 export default Handle;
