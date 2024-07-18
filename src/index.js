@@ -2,14 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { scaleTime } from "d3-scale";
 import { Slider, Rail, Handles, Tracks, Ticks } from "react-compound-slider";
-import {
-  format,
-  addHours,
-  startOfToday,
-  endOfToday,
-  differenceInMilliseconds,
-  set,
-} from "date-fns";
+import { differenceInMilliseconds } from "date-fns";
 
 import SliderRail from "./components/SliderRail";
 import Track from "./components/Track";
@@ -141,7 +134,7 @@ class TimeRange extends React.Component {
               {({ ticks }) => (
                 <>
                   {ticks.map((tick, index) => (
-                    <React.Fragment key={tick}>
+                    <React.Fragment key={`${tick}_${index}`}>
                       <div className="react_time_range__tick_label" style={{}}>
                         {formatTick(tick.value)}
                       </div>
@@ -160,7 +153,7 @@ class TimeRange extends React.Component {
                               height="2"
                               rx="1"
                               fill="white"
-                              fill-opacity="0.6"
+                              fillOpacity="0.6"
                             />
                           </svg>
                           <svg
@@ -176,7 +169,7 @@ class TimeRange extends React.Component {
                               height="2"
                               rx="1"
                               fill="white"
-                              fill-opacity="0.6"
+                              fillOpacity="0.6"
                             />
                           </svg>
                           <svg
@@ -192,7 +185,7 @@ class TimeRange extends React.Component {
                               height="2"
                               rx="1"
                               fill="white"
-                              fill-opacity="0.6"
+                              fillOpacity="0.6"
                             />
                           </svg>
                         </>
