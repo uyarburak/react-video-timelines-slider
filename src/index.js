@@ -254,6 +254,7 @@ class TimeRange extends React.Component {
                             ? `calc(${handle.percent}% + 6px)`
                             : `calc(${100 - handle.percent}% + 4px)`,
                         backdropFilter: "blur(2px)",
+                        WebkitBackdropFilter: "blur(2px)",
                         background: "#FFFFFF1A",
                         height: "40px",
                         position: "absolute",
