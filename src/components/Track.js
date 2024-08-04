@@ -24,10 +24,8 @@ const Track = ({
   getTrackProps,
   borderColor,
   setPercentage,
+  isTouchDevice,
 }) => {
-  const isTouchDevice =
-    !window.matchMedia("(hover: none)").matches ||
-    window.matchMedia("(pointer: coarse)").matches;
   return (
     <div
       className="react_time_range__track"
@@ -74,6 +72,7 @@ Track.propTypes = {
   getTrackProps: PropTypes.func.isRequired,
   borderColor: PropTypes.string.isRequired,
   setPercentage: PropTypes.func.isRequired,
+  isTouchDevice: PropTypes.bool.isRequired,
 };
 
 export default Track;

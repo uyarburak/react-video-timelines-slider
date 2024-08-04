@@ -122,6 +122,10 @@ class TimeRange extends React.Component {
       (differenceInMilliseconds(now, timelineInterval[0]) / timelineLength) *
       100;
 
+    const isTouchDevice =
+      !window.matchMedia("(hover: none)").matches ||
+      window.matchMedia("(pointer: coarse)").matches;
+
     return (
       <div
         className={
@@ -238,8 +242,14 @@ class TimeRange extends React.Component {
                       isActive={handle.id === activeHandleID}
                       showTooltip={showTooltip}
                       borderColor={borderColor}
-                      onMouseEnter={() => this.setDisabled(false)}
-                      onMouseLeave={() => this.setDisabled(true)}
+                      onMouseEnter={
+                        isTouchDevice
+                          ? undefined
+                          : () => this.setDisabled(false)
+                      }
+                      onMouseLeave={
+                        isTouchDevice ? undefined : () => this.setDisabled(true)
+                      }
                     />
                   ))}
                   {handles.map((handle, index) => (
@@ -280,6 +290,7 @@ class TimeRange extends React.Component {
                       getTrackProps={getTrackProps}
                       borderColor={borderColor}
                       setPercentage={this.setPercentage}
+                      isTouchDevice={isTouchDevice}
                     />
                   ))}
                 </>
