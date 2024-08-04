@@ -210,7 +210,7 @@ class TimeRange extends React.Component {
               width: "100%",
               marginTop: "38px",
             }}
-            disabled={this.state.disabled}
+            disabled={!isTouchDevice && this.state.disabled}
           >
             <Rail>
               {({ getRailProps, getEventData, activeHandleID }) => (
@@ -240,14 +240,8 @@ class TimeRange extends React.Component {
                       isActive={handle.id === activeHandleID}
                       showTooltip={showTooltip}
                       borderColor={borderColor}
-                      onMouseEnter={
-                        isTouchDevice
-                          ? undefined
-                          : () => this.setDisabled(false)
-                      }
-                      onMouseLeave={
-                        isTouchDevice ? undefined : () => this.setDisabled(true)
-                      }
+                      onMouseEnter={() => this.setDisabled(false)}
+                      onMouseLeave={() => this.setDisabled(true)}
                     />
                   ))}
                   {handles.map((handle, index) => (
