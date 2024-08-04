@@ -122,9 +122,7 @@ class TimeRange extends React.Component {
       (differenceInMilliseconds(now, timelineInterval[0]) / timelineLength) *
       100;
 
-    const isTouchDevice =
-      !window.matchMedia("(hover: none)").matches ||
-      window.matchMedia("(pointer: coarse)").matches;
+    const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
 
     return (
       <div
