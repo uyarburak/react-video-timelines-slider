@@ -24,32 +24,41 @@ const Track = ({
   getTrackProps,
   borderColor,
   setPercentage,
-}) => (
-  <div
-    className="react_time_range__track"
-    style={getTrackConfig({
-      source,
-      target,
-      borderColor,
-    })}
-    {...getTrackProps()}
-    onClick={(e) => {
-      if (e.target.className !== "react_time_range__track") {
-        return;
+}) => {
+  const isTouchDevice =
+    !window.matchMedia("(hover: none)").matches ||
+    window.matchMedia("(pointer: coarse)").matches;
+  return (
+    <div
+      className="react_time_range__track"
+      style={getTrackConfig({
+        source,
+        target,
+        borderColor,
+      })}
+      {...getTrackProps()}
+      onClick={
+        isTouchDevice
+          ? undefined
+          : (e) => {
+              if (e.target.className !== "react_time_range__track") {
+                return;
+              }
+              const target = e.target;
+              const targetWidth = target.offsetWidth;
+              // Get the bounding rectangle of the target element
+              const rect = target.getBoundingClientRect();
+
+              // Calculate the click position relative to the target element
+              const clickPosition = e.clientX - rect.left;
+
+              const widthPercentage = clickPosition / targetWidth;
+              setPercentage(widthPercentage);
+            }
       }
-      const target = e.target;
-      const targetWidth = target.offsetWidth;
-      // Get the bounding rectangle of the target element
-      const rect = target.getBoundingClientRect();
-
-      // Calculate the click position relative to the target element
-      const clickPosition = e.clientX - rect.left;
-
-      const widthPercentage = clickPosition / targetWidth;
-      setPercentage(widthPercentage);
-    }}
-  />
-);
+    />
+  );
+};
 
 Track.propTypes = {
   source: PropTypes.shape({
