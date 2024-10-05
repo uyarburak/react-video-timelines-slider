@@ -218,7 +218,10 @@ class TimeRange extends React.Component {
               width: "100%",
               marginTop: "38px",
             }}
-            disabled={!isTouchDevice && this.state.disabled}
+            disabled={
+              !(isTouchDevice || selectedInterval.length === 1) &&
+              this.state.disabled
+            }
           >
             <Rail>
               {({ getRailProps, getEventData, activeHandleID }) => (
