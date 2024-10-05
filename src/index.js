@@ -33,15 +33,23 @@ class TimeRange extends React.Component {
 
   setPercentage = (percentage) => {
     const { selectedInterval } = this.props;
-    if (typeof selectedInterval[0] === "object") {
-      const diff =
-        selectedInterval[1].getTime() - selectedInterval[0].getTime();
-      this.props.setNow(
-        new Date(selectedInterval[0].getTime() + diff * percentage)
-      );
+    if (selectedInterval.length === 1) {
+      if (typeof selectedInterval[0] === "object") {
+        this.props.setNow(new Date(selectedInterval[0].getTime() * percentage));
+      } else {
+        this.props.setNow(new Date(selectedInterval[0] * percentage));
+      }
     } else {
-      const diff = selectedInterval[1] - selectedInterval[0];
-      this.props.setNow(new Date(selectedInterval[0] + diff * percentage));
+      if (typeof selectedInterval[0] === "object") {
+        const diff =
+          selectedInterval[1].getTime() - selectedInterval[0].getTime();
+        this.props.setNow(
+          new Date(selectedInterval[0].getTime() + diff * percentage)
+        );
+      } else {
+        const diff = selectedInterval[1] - selectedInterval[0];
+        this.props.setNow(new Date(selectedInterval[0] + diff * percentage));
+      }
     }
   };
 
