@@ -252,29 +252,30 @@ class TimeRange extends React.Component {
                       onMouseLeave={() => this.setDisabled(true)}
                     />
                   ))}
-                  {handles.map((handle, index) => (
-                    <div
-                      key={handle.id}
-                      style={{
-                        left: index === 0 ? 0 : undefined,
-                        right: index === 0 ? undefined : 0,
-                        top: "-20px",
-                        width:
-                          index === 0
-                            ? `calc(${handle.percent}% + 6px)`
-                            : `calc(${100 - handle.percent}% + 4px)`,
-                        backdropFilter: "blur(2px)",
-                        WebkitBackdropFilter: "blur(2px)",
-                        background: "#FFFFFF1A",
-                        height: "40px",
-                        position: "absolute",
-                        zIndex: 1,
-                        borderRadius:
-                          index === 0 ? "16px 0 0 16px" : "0 16px 16px 0",
-                        pointerEvents: "none",
-                      }}
-                    ></div>
-                  ))}
+                  {handles.length > 1 &&
+                    handles.map((handle, index) => (
+                      <div
+                        key={handle.id}
+                        style={{
+                          left: index === 0 ? 0 : undefined,
+                          right: index === 0 ? undefined : 0,
+                          top: "-20px",
+                          width:
+                            index === 0
+                              ? `calc(${handle.percent}% + 6px)`
+                              : `calc(${100 - handle.percent}% + 4px)`,
+                          backdropFilter: "blur(2px)",
+                          WebkitBackdropFilter: "blur(2px)",
+                          background: "#FFFFFF1A",
+                          height: "40px",
+                          position: "absolute",
+                          zIndex: 1,
+                          borderRadius:
+                            index === 0 ? "16px 0 0 16px" : "0 16px 16px 0",
+                          pointerEvents: "none",
+                        }}
+                      ></div>
+                    ))}
                 </>
               )}
             </Handles>
