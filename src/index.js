@@ -291,7 +291,9 @@ class TimeRange extends React.Component {
                       getTrackProps={getTrackProps}
                       borderColor={borderColor}
                       setPercentage={this.setPercentage}
-                      isTouchDevice={isTouchDevice}
+                      isTouchDevice={
+                        isTouchDevice || selectedInterval.length === 1
+                      }
                     />
                   ))}
                 </>
